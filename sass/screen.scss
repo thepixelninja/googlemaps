@@ -1,0 +1,66 @@
+/*
+ * GOOGLEMAPS.NINJA
+ * SCREEN.SCSS
+ * THESE STYLES ARE JUST FOR THE DEMO PAGE, FEEL FREE TO USE THEM OR DISCARD AND WRITE YOUR OWN
+ */
+
+body {
+    font-family:"Oswald",Arial,Helvetica,sans-serif;
+    padding:50px 0;
+}
+
+/*-----THE MAP CONTAINER STYLES-----*/
+
+.googleMap {
+    background:#ccc url(../images/map-loading.gif) no-repeat center;
+}
+
+/*-----THE INFO WINDOW STYLES-----*/
+
+.googleMapNinja {
+    .infoWindow {
+        width:100%;
+        overflow:auto;
+        .infoTitle {
+            font-size:120%;
+            margin:0 0 1em 0;
+        }
+        .infoThumb {
+            margin:0 0 1em 0;
+            img {
+                width:100%;
+                height:auto;
+            }
+        }
+        .infoContent {
+            margin:0 0 1em 0;
+        }
+        .infoButton {
+            float:right;
+        }
+    }
+}
+
+/*-----THE DIRECTIONS FORM-----*/
+
+.googleMapNinjaForm {
+    padding:1em 0;
+    input,
+    select {
+        //padding:0.5em;
+        //border:1px solid #ccc;
+    }
+}
+
+/*-----THE TEXTUAL DIRECTIONS STYLES-----*/
+
+.googleMapNinjaDirections {
+    table {
+        width:100%;
+    }
+    .adp-placemark {
+        td {
+            padding:1em;
+        }
+    }
+}
