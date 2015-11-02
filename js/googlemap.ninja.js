@@ -92,9 +92,9 @@ googleMap.queueCallback = function(callback){
     //check if the callback is already queued and if not queue it
     if($.inArray(callback,googleMap.callbackQueue) === -1){
         googleMap.callbackQueue.push(callback);
-        console.log("adding");
+        //console.log("adding");
     }else{
-        console.log("skipping already there");
+        //console.log("skipping already there");
     }
 
 };
@@ -350,7 +350,7 @@ googleMap.dropMarker = function(map,options,markerCallback){
         var marker = new google.maps.Marker({
             position : options.location,
             title    : options.title,
-            icon     : icon.image,
+            icon     : icon.image || icon || null,
             //shadow   : icon.shadow || null
         });
 
