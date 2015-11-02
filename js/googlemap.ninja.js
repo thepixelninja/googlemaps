@@ -43,24 +43,28 @@ var googleMap = {};
 
 googleMap.init = function(initCallback){
 
-    //save callback
-    googleMap.initCallback = initCallback;
-
     //if no google
     if(typeof(google) === "undefined"){
+        //load script
         googleMap.loadMapScript();
+        //save callback
+        googleMap.queueCallback(initCallback);
         return false;
+    }else{
+        //if no google maps
+        try{
+            var test = new google.maps.Geocoder();
+        }catch(e){
+            //console.log(e);
+            //load script
+            googleMap.loadMapScript();
+            //save callback
+            googleMap.queueCallback(initCallback);
+            return false;
+        }
     }
 
-    //if no google maps
-    try{
-        var test = new google.maps.Geocoder();
-    }catch(e){
-        //console.log(e);
-        googleMap.loadMapScript();
-        return false;
-    }
-
+    //if all good and loaded then simply run callback
     if(typeof(initCallback) == "function"){
         initCallback();
     }
@@ -76,12 +80,38 @@ googleMap.loadMapScript = function(){
     },100);
 };
 
-/*---------ONCE THE MAP SCRIPT HAS LOADED----------*/
+/*----------QUEUE A CALLBACK FOR RUNNING ONCE MAPS IS LOADED----------*/
+
+googleMap.queueCallback = function(callback){
+
+    //in no queue callback array the create
+    if(!googleMap.callbackQueue){
+        googleMap.callbackQueue = new Array();
+    }
+
+    //check if the callback is already queued and if not queue it
+    if($.inArray(callback,googleMap.callbackQueue) === -1){
+        googleMap.callbackQueue.push(callback);
+        console.log("adding");
+    }else{
+        console.log("skipping already there");
+    }
+
+};
+
+/*----------ONCE THE MAP SCRIPT HAS LOADED----------*/
 
 function mapScriptReady(){
-    googleMap.init(googleMap.initCallback);
-    googleMap.initCallback = false;
-}
+
+    //loop the queued callbacks and fire them off
+    $.each(googleMap.callbackQueue,function(i,callback){
+        callback();
+        if(i == googleMap.callbackQueue.length-1){
+            googleMap.callbackQueue = new Array();
+        }
+    });
+
+};
 
 /*---------DRAW A MAP----------*/
 
