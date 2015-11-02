@@ -70,7 +70,10 @@ googleMap.init = function(initCallback){
 /*---------LOAD THE GOOGLE MAP SCRIPT----------*/
 
 googleMap.loadMapScript = function(){
-    $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&callback=mapScriptReady");
+    clearTimeout(googleMap.loadTimer);
+    googleMap.loadTimer = setTimeout(function(){
+        $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&callback=mapScriptReady");
+    },100);
 };
 
 /*---------ONCE THE MAP SCRIPT HAS LOADED----------*/
