@@ -298,6 +298,7 @@ googleMap.directions = function(map,options){
             directionsService.route(request,function(result,status){
                 //console.log(result,status);
                 if(status == google.maps.DirectionsStatus.OK){
+                    options.directions.html("");
                     directionsDisplay.setDirections(result);
                 }else{
                     options.directions.html("<div class='alert alert-danger'>Sorry, No results found.</div>");
