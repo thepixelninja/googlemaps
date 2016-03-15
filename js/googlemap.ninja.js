@@ -76,7 +76,7 @@ googleMap.init = function(initCallback){
 googleMap.loadMapScript = function(){
     clearTimeout(googleMap.loadTimer);
     googleMap.loadTimer = setTimeout(function(){
-        $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&callback=mapScriptReady");
+        $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry&callback=mapScriptReady");
     },100);
 };
 
@@ -488,11 +488,19 @@ googleMap.infoWindow = function(map,marker,options,infoWindowCallback){
 
 };
 
+/*----------GET THE DISTANCE BETWEEN TWO MARKERS----------*/
+
+googleMap.distanceBetween = function(marker1,marker2){
+
+    var pos1 = marker1.getPosition();
+    var pos2 = marker2.getPosition();
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(pos1,pos2);
+    return dist;
+
+};
+
 /*----------GET A RANDOM COLOR----------*/
 
 googleMap.randomColor = function(){
     return "#"+Math.floor(Math.random()*16777215).toString(16);
 };
-
-
-
