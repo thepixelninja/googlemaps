@@ -123,27 +123,30 @@ googleMap.draw = function(el,options,drawCallback){
         el.css("height",500);
     }
 
-    //if simply having address as options
-    if(typeof(options) == "string"){
-        options = {
-            address : options,
-            zoom    : 10,
-            bgColor : "none"
-        };
-    //else options object is present
-    }else{
-        //we always need a zoom level
-        if(options.zoom === undefined){
-            options.zoom = 10;
-        }
-        //background color of map
-        if(options.bgColor === undefined){
-            options.bgColor = "none";
-        }
-    }
-
     //make sure we have inited map lib
     googleMap.init(function(){
+
+        //if simply having address as options
+        if(typeof(options) == "string"){
+            options = {
+                address : options,
+                zoom    : 10,
+                bgColor : "none"
+            };
+        //else options object is present
+        }else{
+            //set some defaults
+            var defaults = {
+                mapTypeId           : google.maps.MapTypeId.ROADMAP,
+                zoom                : 10,
+                backgroundColor     : "none",
+                styles              : [{
+                    featureType : "poi",
+                    stylers     : [{visibility:"off"}]
+                }]
+            }
+            options = $.extend(defaults,options);
+        }
 
         //if already lat and lng
         if(options.location){
@@ -170,17 +173,8 @@ googleMap.draw = function(el,options,drawCallback){
     //draw map
     function draw(location){
         //create map
-        var map = new google.maps.Map(el.get(0),{
-            //turn off points of interest
-            styles      :  [{
-                featureType : "poi",
-                stylers     : [{visibility:"off"}]
-            }],
-            center          : location,
-            zoom            : options.zoom,
-            mapTypeId       : google.maps.MapTypeId.ROADMAP,
-            backgroundColor : options.bgColor
-        });
+        options.center = location;
+        var map = new google.maps.Map(el.get(0),options);
         //fix some styles that mess up the styling of google map
         el.addClass("googleMapNinja").append("<style type='text/css'>.googleMapNinja img { max-width:none; }</style>");
         //callback
