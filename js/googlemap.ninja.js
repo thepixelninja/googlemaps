@@ -76,7 +76,7 @@ googleMap.init = function(initCallback){
 googleMap.loadMapScript = function(){
     clearTimeout(googleMap.loadTimer);
     googleMap.loadTimer = setTimeout(function(){
-        $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry&callback=mapScriptReady");
+        $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry&callback=googleMap.mapScriptReady");
     },100);
 };
 
@@ -101,7 +101,7 @@ googleMap.queueCallback = function(callback){
 
 /*----------ONCE THE MAP SCRIPT HAS LOADED----------*/
 
-function mapScriptReady(){
+googleMap.mapScriptReady = function(){
 
     //loop the queued callbacks and fire them off
     $.each(googleMap.callbackQueue,function(i,callback){
