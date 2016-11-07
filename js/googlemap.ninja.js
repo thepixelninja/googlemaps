@@ -373,6 +373,86 @@ googleMap.dropMarker = function(map,options,markerCallback){
 
 };
 
+/*----------CUSTOM MARKER----------*/
+
+googleMap.dropCustomMarker = function(map,options){
+
+    var marker;
+    customMarker.prototype = new google.maps.OverlayView();
+
+    //if simply having address as options
+    if(typeof(options) == "string"){
+        options = {
+            title   : options,
+            address : options,
+            delay   : 1000
+        };
+        googleMap.geoCode(options.address,function(location,status){
+            options.location = location;
+            marker = new customMarker(options);
+        });
+    //else more complex options
+    }else{
+        if(options.location === undefined){
+            googleMap.geoCode(options.address,function(location,status){
+                options.location = location;
+                marker = new customMarker(options);
+            });
+        }else{
+            if($.isArray(options.location)){
+                options.location = new google.maps.LatLng(options.location[0],options.location[1]);
+            }else{
+                options.location = new google.maps.LatLng(options.location.lat,options.location.lng);
+            }
+            marker = new customMarker(options);
+        }
+    }
+
+    //construct a custom marker
+    function customMarker(options){
+        this.html = options.html || "Hello there!";
+        this.div = $("<div class='customMarker'>"+this.html+"</div>");
+        this.options = options;
+        this.setMap(map);
+    }
+
+    //draw the custom marker
+    customMarker.prototype.draw = function(){
+        var self = this;
+        //position the marker
+        var panes = this.getPanes();
+        panes.overlayImage.appendChild(this.div.get(0));
+        var point = this.getProjection().fromLatLngToDivPixel(this.options.location);
+        if(point){
+            this.div.css({
+                position    : "absolute",
+                top         : point.y,
+                left        : point.x,
+                transform   : "translate(-50%,-100%)"
+            })
+        }
+        //create info window if needed
+        if(this.options.infoWindow){
+            googleMap.infoWindow(map,self,this.options,function(infoWindow){
+                self.infoWindow = infoWindow;
+            });
+        }
+        //on click of marker open an info window if needed
+        self.div.on("click",function(){
+            if(googleMap.curInfowindow){
+                googleMap.curInfowindow.close();
+            }
+            if(self.infoWindow){
+                self.infoWindow.open(map,self)
+                self.infoWindow.setPosition(self.options.location);
+                googleMap.curInfowindow = self.infoWindow;
+            }
+            self.div.trigger("markerClicked");
+        });
+    }
+
+};
+
 /*----------DROP SEVERAL MARKERS---------*/
 
 googleMap.dropMarkers = function(map,markers,markersCallback,markerCallback){
