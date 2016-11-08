@@ -172,11 +172,29 @@ googleMap.draw = function(el,options,drawCallback){
 
     //draw map
     function draw(location){
+
         //create map
         options.center = location;
         var map = new google.maps.Map(el.get(0),options);
+
         //fix some styles that mess up the styling of google map
         el.addClass("googleMapNinja").append("<style type='text/css'>.googleMapNinja img { max-width:none; }</style>");
+
+        //add custom zoom controls if needed
+        if(options.customZoomControls){
+            var zoomControls    = $("<div class='zoomControls'></div>");
+            var zoomIn          = $("<button class='zoomIn'>+</button>");
+            var zoomOut         = $("<button class='zoomOut'>-</button>");
+            zoomIn.on("click",function(){
+                map.setZoom(map.getZoom()+1);
+            });
+            zoomOut.on("click",function(){
+                map.setZoom(map.getZoom()-1);
+            });
+            zoomControls.append(zoomIn).append(zoomOut);
+            el.append(zoomControls);
+        }
+
         //callback
         if(typeof(drawCallback) == "function"){
             drawCallback(map,el);
