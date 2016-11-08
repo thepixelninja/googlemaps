@@ -428,22 +428,22 @@ googleMap.dropCustomMarker = function(map,options,markerCallback){
 
     //construct a custom marker
     function customMarker(options){
-        this.html = options.html || "Hello there!";
-        this.div = $("<div class='customMarker'>"+this.html+"</div>");
-        this.options = options;
-        this.setMap(map);
-    }
-
-    //draw the custom marker
-    customMarker.prototype.draw = function(){
 
         var self = this;
-        //position the marker
-        var panes = this.getPanes();
 
+        //create the markup
+        self.html = options.html || "Hello there!";
+        self.div = $("<div class='customMarker'>"+this.html+"</div>");
+
+        //save the options
+        self.options = options;
+
+        //set the marker to the map
+        self.setMap(map);
+        
         //create info window if needed
-        if(this.options.infoWindow){
-            googleMap.infoWindow(map,self,this.options,function(infoWindow){
+        if(self.options.infoWindow){
+            googleMap.infoWindow(map,self,self.options,function(infoWindow){
                 self.infoWindow = infoWindow;
             });
         }
@@ -461,6 +461,16 @@ googleMap.dropCustomMarker = function(map,options,markerCallback){
             self.div.trigger("markerClicked");
         });
 
+    }
+
+    //draw the custom marker
+    customMarker.prototype.draw = function(){
+
+        var self = this;
+
+        //position the marker
+        var panes = self.getPanes();
+
         //add marker to map
         setTimeout(function(){
             panes.overlayImage.appendChild(self.div.get(0));
@@ -473,10 +483,10 @@ googleMap.dropCustomMarker = function(map,options,markerCallback){
                     transform   : "translate(-50%,-100%)"
                 })
             }
-            self.dropped = true;
-            if(typeof(markerCallback) == "function"){
+            if(!self.dropped && typeof(markerCallback) == "function"){
                 markerCallback(marker);
             }
+            self.dropped = true;
         },options.delay);
 
     }
