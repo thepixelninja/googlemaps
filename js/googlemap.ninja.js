@@ -161,7 +161,7 @@ googleMap.draw = function(el,options,drawCallback){
         }else{
 
             //geocode address
-            googleMap.geoCode(options.address,function(location,status){
+            googleMap.geoCode(options.address,function(location){
                 //draw map
                 draw(location);
             });
@@ -217,11 +217,11 @@ googleMap.geoCode = function(address,geoCallback){
         geocoder.geocode({"address":address},function(results,status){
             if(status == google.maps.GeocoderStatus.OK){
                 if(typeof(geoCallback) == "function"){
-                    geoCallback(results[0].geometry.location,"success");
+                    geoCallback(results[0].geometry.location,results,"success");
                 }
             }else{
                 if(typeof(geoCallback) == "function"){
-                    geoCallback(false,status);
+                    geoCallback(false,false,status);
                 }
             }
         });
@@ -333,13 +333,13 @@ googleMap.dropMarker = function(map,options,markerCallback){
             address : options,
             delay   : 1000
         };
-        googleMap.geoCode(options.address,function(location,status){
+        googleMap.geoCode(options.address,function(location){
             options.location = location;
             drop(options);
         });
     }else{
         if(!options.location){
-            googleMap.geoCode(options.address,function(location,status){
+            googleMap.geoCode(options.address,function(location){
                 options.location = location;
                 drop(options);
             });
@@ -405,14 +405,14 @@ googleMap.dropCustomMarker = function(map,options,markerCallback){
             address : options,
             delay   : 1000
         };
-        googleMap.geoCode(options.address,function(location,status){
+        googleMap.geoCode(options.address,function(location){
             options.location = location;
             marker = new customMarker(options);
         });
     //else more complex options
     }else{
         if(!options.location){
-            googleMap.geoCode(options.address,function(location,status){
+            googleMap.geoCode(options.address,function(location){
                 options.location = location;
                 marker = new customMarker(options);
             });
@@ -440,7 +440,7 @@ googleMap.dropCustomMarker = function(map,options,markerCallback){
 
         //set the marker to the map
         self.setMap(map);
-        
+
         //create info window if needed
         if(self.options.infoWindow){
             googleMap.infoWindow(map,self,self.options,function(infoWindow){
@@ -542,6 +542,85 @@ googleMap.markerImage = function(pinColor){
     return pin;
 
 };
+
+/*---------CUSTOM OVERLAY----------*/
+
+googleMap.customOverlay = function(map,options){
+
+    //some init vars
+    var overlay;
+    customOverlay.prototype = new google.maps.OverlayView();
+
+    //geocode the bounds is a string
+    if(typeof(options.bounds) === "string"){
+        googleMap.geoCode(options.bounds,function(center,results){
+            options.bounds = results[0].geometry.bounds;
+            overlay = new customOverlay(options);
+        });
+    //else just draw
+    }else{
+        overlay = new customOverlay(options);
+    }
+
+    //construct a custom overlay
+    function customOverlay(options){
+
+        var self = this;
+
+        // Initialize all properties.
+        self.options = options;
+
+        //create the overlay div
+        self.div = $("<div class='customOverlay' style='overflow:hidden; position:absolute;'></div>");
+
+        //create the overlay image
+        self.image = $("<img style='width:100%; height:auto;' src='"+options.image+"'/>");
+
+        //add the div to the map
+        self.setMap(map);
+
+    }
+
+    //adding an overlay to the map
+    customOverlay.prototype.onAdd = function(){
+
+        var self = this;
+
+        //add the image to the div
+        self.div.append(self.image);
+
+        //add the div to the map
+        var panes = self.getPanes();
+        panes.overlayLayer.appendChild(self.div.get(0));
+
+    }
+
+    //drawing the overlay
+    customOverlay.prototype.draw = function(){
+
+        var self = this;
+
+        //coordinates of the overlay to peg it to the correct position and size.
+        //to do this, we need to retrieve the projection from the overlay.
+        var overlayProjection = self.getProjection();
+
+        //Retrieve the south-west and north-east coordinates of this overlay
+        //in LatLngs and convert them to pixel coordinates.
+        //We'll use these coordinates to resize the div.
+        var sw = overlayProjection.fromLatLngToDivPixel(self.options.bounds.getSouthWest());
+        var ne = overlayProjection.fromLatLngToDivPixel(self.options.bounds.getNorthEast());
+
+        //Resize the image's div to fit the indicated dimensions.
+        self.div.css({
+            left        : sw.x,
+            top         : ne.y,
+            width       : ne.x-sw.x,
+            height      : sw.y-ne.y
+        });
+
+    }
+
+}
 
 /*----------INFO WINDOW----------*/
 
