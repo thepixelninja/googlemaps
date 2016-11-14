@@ -551,14 +551,6 @@ googleMap.customOverlay = function(map,options){
     var overlay;
     customOverlay.prototype = new google.maps.OverlayView();
 
-    //tweaking options
-    if(!options.tweak){
-        options.tweak = {
-            top     : 0,
-            left    : 0
-        }
-    }
-
     //geocode the bounds is a string
     if(typeof(options.bounds) === "string"){
         googleMap.geoCode(options.bounds,function(center,results){
@@ -620,8 +612,8 @@ googleMap.customOverlay = function(map,options){
 
         //Resize the image's div to fit the indicated dimensions.
         self.div.css({
-            left        : sw.x+self.options.tweak.left,
-            top         : ne.y+self.options.tweak.top,
+            left        : sw.x,
+            top         : ne.y,
             width       : ne.x-sw.x,
             height      : sw.y-ne.y
         });
