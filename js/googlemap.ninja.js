@@ -195,11 +195,54 @@ googleMap.draw = function(el,options,drawCallback){
             el.append(zoomControls);
         }
 
+        //add map keyboard controls
+        googleMap.initKeyboardControls(el,map);
+
         //callback
         if(typeof(drawCallback) == "function"){
             drawCallback(map,el);
         }
     }
+
+};
+
+/*---------ADD KEYBOARD CONTROLS TO THE MAP---------*/
+
+googleMap.initKeyboardControls = function(el,map){
+
+    //make map focusable
+    el.attr("tabindex",1);
+
+    //on keypress of map
+    el.on("keydown",function(e){
+        var key = e.which;
+        switch(key){
+            //left arrow
+            case 37:
+                map.panBy(-el.width()/2,0);
+            break;
+            //right arrow
+            case 39:
+                map.panBy(el.width()/2,0);
+            break;
+            //up arrow
+            case 38:
+                map.panBy(0,-el.height()/2);
+            break;
+            //down arrow
+            case 40:
+                map.panBy(0,el.height()/2);
+            break;
+            //plus sign
+            case 187:
+                map.setZoom(map.getZoom()+1);
+            break;
+            //minus sign
+            case 189:
+                map.setZoom(map.getZoom()-1);
+            break;
+        }
+    });
 
 };
 
