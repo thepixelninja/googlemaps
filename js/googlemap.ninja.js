@@ -215,6 +215,7 @@ googleMap.initKeyboardControls = function(el,map){
 
     //on keypress of map
     el.on("keydown",function(e){
+        e.preventDefault();
         var key = e.which;
         switch(key){
             //left arrow
