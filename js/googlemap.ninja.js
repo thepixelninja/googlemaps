@@ -152,7 +152,11 @@ googleMap.draw = function(el,options,drawCallback){
         if(options.location){
 
             //create location
-            var location = new google.maps.LatLng(options.location[0],options.location[1]);
+            if($.isArray(options.location)){
+                var location = new google.maps.LatLng(options.location[0],options.location[1]);
+            }else{
+                var location = new google.maps.LatLng(options.location.lat,options.location.lng);
+            }
 
             //draw map
             draw(location);
